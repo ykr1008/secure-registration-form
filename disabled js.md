@@ -1,0 +1,2 @@
+when Javascript is disabled and tried to submit the form with invalid inputs, the native html validation didnt accept the form, as shown in javascript disabled 1.png
+but when the form was given valid inputs, but didnt check the skill section as it was functioned by javascript, the native html validation passed, but the flask server rejected it successfully as shown in  javascript disabled 2.png
