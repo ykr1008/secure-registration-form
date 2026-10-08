@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure Registration</title>
+    <meta
+      name="description"
+      content="a secure registration form taking inputs from the client"
+    />
+  </head>
+  <body>
+    <main>
+      <h1>Registration Form</h1>
+      <form action="/register" method="POST" enctype="multipart/form-data">
+        <input type="hidden" id="form-version" name="form_version" value="1" />
+        <div>
+          <label for="name">Name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            minlength="3"
+            maxlength="25"
+            aria-describedby="name-error"
+            aria-invalid="false"
+          />
+          <p id="name-error" hidden>
+            Name must be between 3 and 25 characters.
+          </p>
+        </div>
+        <br />
+        <div>
+          <label for="mail">Email:</label>
+          <input
+            type="email"
+            id="mail"
+            name="email"
+            required
+            maxlength="100"
+            autocomplete="email"
+            aria-describedby="email-error"
+            aria-invalid="false"
+          />
+          <p id="email-error" hidden>Please enter a valid email address.</p>
+        </div>
+        <br />
+        <div>
+          <label for="password">Password</label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            required
+            minlength="8"
+            maxlength="64"
+            autocomplete="new-password"
+            aria-describedby="password-error"
+            aria-invalid="false"
+          />
+          <p id="password-error" hidden>
+            Password must be between 8 and 64 characters.
+          </p>
+        </div>
+        <br />
+        <div>
+          <label for="phone">Phone</label>
+          <!-- type="tel" is used instead of number because phone numbers are identifiers,
+          not quantities, and may contain leading zeros. -->
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            pattern="[0-9]{10}"
+            title="Enter exactly 10 digits"
+            required
+            aria-describedby="phone-error"
+            aria-invalid="false"
+          />
+          <p id="phone-error" hidden>Please enter a valid phone number.</p>
+        </div>
+        <br />
+        <div>
+          <label for="age">Age</label>
+          <input
+            type="number"
+            id="age"
+            name="age"
+            min="18"
+            max="25"
+            required
+            aria-describedby="age-error"
+            aria-invalid="false"
+          />
+          <p id="age-error" hidden>You must be between 18 and 25 years old.</p>
+        </div>
+        <br />
+        <div>
+          <label for="dob">Date of Birth</label>
+          <input
+            type="date"
+            id="dob"
+            name="dob"
+            required
+            aria-describedby="dob-error"
+            aria-invalid="false"
+          />
+          <p id="dob-error" hidden>Please enter a valid date of birth.</p>
+        </div>
+        <br />
+        <fieldset aria-describedby="gender-error" aria-invalid="false">
+          <legend>Gender</legend>
+          <div>
+            <input type="radio" id="male" name="gender" value="male" required />
+            <label for="male">Male</label><br />
+
+            <input type="radio" id="female" name="gender" value="female" />
+            <label for="female">Female</label><br />
+
+            <input type="radio" id="others" name="gender" value="others" />
+            <label for="others">Others</label><br />
+          </div>
+          <p id="gender-error" hidden>Please select your gender.</p>
+        </fieldset>
+        <br />
+        <fieldset aria-describedby="skills-error" aria-invalid="false">
+          <legend>Skills</legend>
+          <div>
+            <input type="checkbox" id="html" name="skills" value="html" />
+            <label for="html">HTML</label><br />
+
+            <input type="checkbox" id="css" name="skills" value="css" />
+            <label for="css">CSS</label><br />
+
+            <input type="checkbox" id="js" name="skills" value="javascript" />
+            <label for="js">JavaScript</label><br />
+
+            <input type="checkbox" id="python" name="skills" value="python" />
+            <label for="python">Python</label><br />
+          </div>
+          <p id="skills-error" hidden>Please select at least one skill.</p>
+        </fieldset>
+        <br />
+        <div>
+          <label for="profile">Profile Photo</label><br />
+          <input
+            type="file"
+            id="profile"
+            name="profile"
+            accept="image/jpeg,image/png"
+            aria-describedby="profile-error"
+            aria-invalid="false"
+          />
+          <p>
+            Maximum file size limit is 2 Mb. Supported file types are jpeg and
+            png.
+          </p>
+          <p id="profile-error" hidden>Please upload a valid profile photo.</p>
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            id="terms"
+            name="terms"
+            required
+            value="accepted"
+            aria-describedby="terms-error"
+            aria-invalid="false"
+          />
+          <label for="terms">I accept all terms & conditions</label>
+          <p id="terms-error" hidden>Please accept the terms and conditions.</p>
+        </div>
+        <div>
+          <input type="submit" id="submit" value="Submit" />
+        </div>
+      </form>
+    </main>
+    <script>
+      const form = document.querySelector("form");
+
+      let focusingFirstInvalid = false;
+
+      form.addEventListener(
+        "invalid",
+        (event) => {
+          const field = event.target;
+
+          field.setAttribute("aria-invalid", "true");
+
+          const errorId = field.getAttribute("aria-describedby");
+          const errorMessage = document.getElementById(errorId);
+
+          if (errorMessage) {
+            errorMessage.hidden = false;
+          }
+
+          if (!focusingFirstInvalid) {
+            focusingFirstInvalid = true;
+
+            setTimeout(() => {
+              field.focus();
+              focusingFirstInvalid = false;
+            }, 0);
+          }
+        },
+        true,
+      );
+
+      const skillCheckboxes = document.querySelectorAll('input[name="skills"]');
+
+      form.addEventListener("submit", (event) => {
+        let hasSkill = false;
+
+        for (const checkbox of skillCheckboxes) {
+          if (checkbox.checked) {
+            hasSkill = true;
+          }
+        }
+
+        if (!hasSkill) {
+          event.preventDefault();
+
+          const skillsFieldset = document.querySelector(
+            'fieldset[aria-describedby="skills-error"]',
+          );
+
+          const skillsError = document.getElementById("skills-error");
+
+          skillsFieldset.setAttribute("aria-invalid", "true");
+          skillsError.hidden = false;
+
+          skillCheckboxes[0].focus();
+        }
+      });
+    </script>
+  </body>
+</html>
